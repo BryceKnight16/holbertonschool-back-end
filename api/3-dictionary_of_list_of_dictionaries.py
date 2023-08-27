@@ -1,19 +1,37 @@
 #!/usr/bin/python3
-"""API request for employee name and todos completed"""
+"""create a REST API export data into json format"""
 import json
 import requests
+import sys
+
 
 if __name__ == "__main__":
-    url = "https://jsonplaceholder.typicode.com"
-    users = requests.get(url + "/users").json()
-    all_todos = {}
 
-    for user in users:
-        user_id = user['id']
-        todos = requests.get(url + "/todos", params={"userId": user_id}).json()
-        user_todos = [{"username": user["username"], "task": todo["title"],
-                       "completed": todo["completed"]} for todo in todos]
-        all_todos[user_id] = user_todos
+    url_employee = "https://jsonplaceholder.typicode.com/users"
+    response_employee = requests.get(url_employee)
 
-    with open("todo_all_employees.json", "w") as outfile:
-        json.dump(all_todos, outfile)
+    output_dict = {}
+    if response_employee.status_code == 200:
+        employee_data = response_employee.json()
+        for employee in employee_data:
+            user_name = employee.get("username")
+            user_id = employee.get("id")
+
+            url_todos = f"{url_employee}/{user_id}/todos"
+            response_todos = requests.get(url_todos)
+            if response_todos.status_code == 200:
+                todos_data = response_todos.json()
+
+            task_list = []
+            for todo in todos_data:
+                task_description = {
+                    'username': user_name,
+                    'task': todo.get("title"),
+                    'completed': todo.get("completed"),
+                    }
+                task_list.append(task_description)
+            output_dict[user_id] = task_list
+
+    filename = "todo_all_employees.json"
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write(json.dumps(output_dict))
