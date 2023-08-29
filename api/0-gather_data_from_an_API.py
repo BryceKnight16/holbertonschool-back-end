@@ -11,8 +11,8 @@ if __name__ == "__main__":
                           params={"userId": sys.argv[1]}).json()
     total_tasks = len(to_dos)
     completed_tasks = sum(1 for to_do in to_dos if to_do["completed"])
-
-    print(f"Employee {user.get('name')} is done with tasks\
-({completed_tasks}/{total_tasks}):")
+    EmployeeName = user.get('name')
+    print(f"Employee {EmployeeName} is done with tasks\
+         ({completed_tasks}/{total_tasks}):")
 
     [print(f"\t {to_do['title']}") for to_do in to_dos if to_do["completed"]]
