@@ -15,4 +15,6 @@ if __name__ == "__main__":
     print(f"Employee {EmployeeName} is done with tasks\
          ({completed_tasks}/{total_tasks}):")
 
-    [print(f"\t {to_do['title']}") for to_do in to_dos if to_do["completed"]]
+    for to_do in to_dos:
+        if to_do.get("completed"):
+            print(f"\t {to_do['title']}")
